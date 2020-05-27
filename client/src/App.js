@@ -1,29 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 const io = require('socket.io-client')
 
-const socket = io.connect('http://localhost:8080')
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      
+    };
+    this.addRoll = this.addRoll.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  handleChange (event) {
+    this.setState({ [event.target.name] : [event.target.value] });
+  }
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  componentDidMount() {
+    const socket = io.connect('http://localhost:8080');
+    this.setState({ socket : socket });
+    socket.on('usersUpdate', (data) => {
+      console.log(data);
+    });
+  }
+
+  addRoll(event) {
+    event.preventDefault();
+    this.state.socket.emit('roll', this.state.Name);
+    console.log('roll' + this.state.Name);
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Rolls:</h2>
+        <div>
+          <form onSubmit={this.addRoll}>
+            <label>Roll!</label>
+            <input type="text" name="Name" onChange ={this.handleChange}/>
+            <input type="submit" value="Submit" />
+          </form>
+        </div>
+      </div>
+    )
+  }
 }
 
 export default App;
