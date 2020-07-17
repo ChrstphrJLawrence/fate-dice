@@ -14,17 +14,18 @@ http.listen(PORT, () => {
 })
 
 io.on('connection', (socket) => {
+  socket.join('defaultRoom');
   console.log('connection!');
-  users.push(socket.id);
+  users.push({id: socket.id, name: socket.id});
   console.log(users);
-  socket.broadcast.emit('usersUpdate', {users: users});
+  io.in('defaultRoom').emit('usersUpdate', {users: users});
 
   socket.on('disconnect', function() {
     console.log('disconnected!');
     var i = users.indexOf(socket.id);
     users.splice(i, 1);
     console.log(users);
-    socket.broadcast.emit('usersUpdate', {users: users});
+    io.in('defaultRoom').emit('usersUpdate', {users: users});
   })
 
   socket.on('roll', (value) => {
