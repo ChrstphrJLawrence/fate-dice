@@ -1,4 +1,5 @@
 var express = require('express');
+const { ALPN_ENABLED } = require('constants');
 var app = express();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
@@ -7,7 +8,7 @@ var io = require('socket.io')(http);
 
 var PORT = 8080;
 
-var users = new Array();
+var users = new Map();
 
 http.listen(PORT, () => {
   console.log('listening on *:8080');
@@ -16,19 +17,31 @@ http.listen(PORT, () => {
 io.on('connection', (socket) => {
   socket.join('defaultRoom');
   console.log('connection!');
-  users.push({id: socket.id, name: socket.id});
+  users.set(socket.id, {id: socket.id, name: socket.id});
   console.log(users);
-  io.in('defaultRoom').emit('usersUpdate', {users: users});
+  io.in('defaultRoom').emit('usersUpdate', {users: Array.from(users)});
 
   socket.on('disconnect', function() {
     console.log('disconnected!');
-    var i = users.indexOf(socket.id);
-    users.splice(i, 1);
-    console.log(users);
-    io.in('defaultRoom').emit('usersUpdate', {users: users});
+    users.delete(socket.id);
+    io.in('defaultRoom').emit('usersUpdate', {users: Array.from(users)});
   })
 
-  socket.on('roll', (value) => {
-    console.log('roll: ' + value);
+  socket.on('nameChange', (name) => {
+    users.set(socket.id, {id: socket.id, name: name})
+    io.in('defaultRoom').emit('usersUpdate', {users: Array.from(users)});
+  })
+
+  socket.on('roll', () => {
+    var user = users.get(socket.id);
+    var dice = [rollDice(), rollDice(), rollDice(), rollDice()];
+    var total = dice.reduce((a, b) => a + b);
+    var result = { name: user.name, total: total, dice: dice };
+    console.log(result);
+    io.in('defaultRoom').emit('roll', result);
   });
+
+  function rollDice() {
+    return -1 + Math.floor(Math.random() * (3));
+  }
 });

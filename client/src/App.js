@@ -11,36 +11,65 @@ class App extends Component {
     this.state = {
       room: {
         name: 'Default Room',
-        users: []
-      } 
+        currentUser: {},
+        users: new Map(),
+        newestResult: {
+          name: '',
+          total: 0,
+          dice: [0, 0, 0, 0]
+        }
+      }
     };
-    // this.addRoll = this.addRoll.bind(this);
+    this.onNameChange = this.onNameChange.bind(this);
+    this.onRoll = this.onRoll.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
   handleChange (event) {
     this.setState({ [event.target.name] : [event.target.value] });
+  }
+
+  onNameChange(name) {
+    var _room = {...this.state.room}
+    _room.currentUser.name = name;
+    this.setState({_room});
+    this.state.socket.emit('nameChange', name);
+    console.log(name);
+    console.log(this.state.room.currentUser);
+  }
+
+  onRoll(event) {
+    event.preventDefault();
+    this.state.socket.emit('roll');
+    console.log('roll');
   }
 
   componentDidMount() {
     const socket = io.connect('http://localhost:8080');
     this.setState({ socket : socket });
+
     socket.on('usersUpdate', (data) => {
-      console.log(data);
+      var users = new Map(data.users)
+      console.log(users);
+      var thisUser = users.get(socket.id);
+      var otherUsers = users;
+      otherUsers.delete(socket.id);
       this.setState({ room: { 
         ...this.state.room, 
-        "users" : data.users } })
-      console.log(this.state.users)
+        "users" : otherUsers,
+        "currentUser": thisUser } })
     });
+
+    socket.on('roll', (result) => {
+      this.setState({ room: {
+        ...this.state.room,
+        "newestResult": result
+      }})
+    })
   }
 
-  // addRoll(event) {
-  //   event.preventDefault();
-  //   this.state.socket.emit('roll', this.state.Name);
-  //   console.log('roll' + this.state.Name);
-  // }
-
   render() {
-    const RoomComponent = () => (<Room {...this.state.room}/>)
+    const RoomComponent = () => (<Room onNameChange={this.onNameChange} onRoll={this.onRoll} {...this.state.room}/>)
 
 
     return (
@@ -49,18 +78,6 @@ class App extends Component {
           <Route exact path="/" render={RoomComponent}/>
         </div>
       </Router>
-
-      /* <div>
-        <h2>Rolls:</h2>
-        <div>
-          <form onSubmit={this.addRoll}>
-            <label>Roll!</label>
-            <input type="text" name="Name" onChange ={this.handleChange}/>
-            <input type="submit" value="Submit" />
-          </form>
-        </div>
-      </div> */
-      
     )
   }
 }
