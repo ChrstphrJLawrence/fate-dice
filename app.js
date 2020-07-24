@@ -6,9 +6,12 @@ var io = require('socket.io')(http);
 
 //TODO Production React Serving
 
-var PORT = 8080;
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+const PORT = process.env.PORT || 8080;
 
 var users = new Map();
+var results = new Array();
 
 http.listen(PORT, () => {
   console.log('listening on *:8080');
@@ -38,10 +41,15 @@ io.on('connection', (socket) => {
     var total = dice.reduce((a, b) => a + b);
     var result = { name: user.name, total: total, dice: dice };
     console.log(result);
-    io.in('defaultRoom').emit('roll', result);
+    results.unshift(result);
+    io.in('defaultRoom').emit('roll', results);
   });
 
   function rollDice() {
     return -1 + Math.floor(Math.random() * (3));
   }
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });

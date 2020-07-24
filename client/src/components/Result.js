@@ -8,7 +8,6 @@ class Result extends Component {
         })
         return (
         <div>
-            <h2>Results:</h2>
             <h4>{this.props.name} rolled {this.props.total}</h4>
             {diceComponents}
         </div>

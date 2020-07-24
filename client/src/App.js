@@ -13,11 +13,7 @@ class App extends Component {
         name: 'Default Room',
         currentUser: {},
         users: new Map(),
-        newestResult: {
-          name: '',
-          total: 0,
-          dice: [0, 0, 0, 0]
-        }
+        results: new Array()
       }
     };
     this.onNameChange = this.onNameChange.bind(this);
@@ -34,14 +30,11 @@ class App extends Component {
     _room.currentUser.name = name;
     this.setState({_room});
     this.state.socket.emit('nameChange', name);
-    console.log(name);
-    console.log(this.state.room.currentUser);
   }
 
   onRoll(event) {
     event.preventDefault();
     this.state.socket.emit('roll');
-    console.log('roll');
   }
 
   componentDidMount() {
@@ -50,7 +43,6 @@ class App extends Component {
 
     socket.on('usersUpdate', (data) => {
       var users = new Map(data.users)
-      console.log(users);
       var thisUser = users.get(socket.id);
       var otherUsers = users;
       otherUsers.delete(socket.id);
@@ -60,10 +52,10 @@ class App extends Component {
         "currentUser": thisUser } })
     });
 
-    socket.on('roll', (result) => {
+    socket.on('roll', (results) => {
       this.setState({ room: {
         ...this.state.room,
-        "newestResult": result
+        "results": results
       }})
     })
   }
