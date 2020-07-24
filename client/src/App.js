@@ -38,7 +38,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const socket = io.connect('http://localhost:8080');
+    const socket = io.connect();
     this.setState({ socket : socket });
 
     socket.on('usersUpdate', (data) => {
