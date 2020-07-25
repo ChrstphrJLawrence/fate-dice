@@ -14,8 +14,10 @@ class User extends Component {
         return (
             <div>
                 {this.props.currentUser
-                ? <input type="text" value={this.props.name} onChange={this.handleChange}></input>
-                : <h3>User: {this.props.name}</h3>
+                ? <div>Your Name: 
+                    <input type="text" value={this.props.name} onChange={this.handleChange}></input>
+                </div>
+                : <h3>{this.props.name}</h3>
             }
             </div>
         )

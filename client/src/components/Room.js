@@ -21,6 +21,9 @@ class Room extends Component {
             <div>
                 <h1>{this.props.name}</h1>
                 <Roll onRoll={this.props.onRoll} />
+                <h2>Results:</h2>
+                <div>{resultsComponents}</div>
+                <h2>Users:</h2>
                 {this.props.currentUser === undefined
                     ? <h4></h4>
                     : <User name={this.props.currentUser.name} 
@@ -28,9 +31,6 @@ class Room extends Component {
                     currentUser='true' 
                     onNameChange={this.props.onNameChange} />
                 }
-                <h2>Results:</h2>
-                <div>{resultsComponents}</div>
-                <h2>Users:</h2>
                 <div>{userComponents}</div>
             </div>
         )
