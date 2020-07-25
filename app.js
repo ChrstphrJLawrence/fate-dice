@@ -13,15 +13,17 @@ const PORT = process.env.PORT || 8080;
 
 var users = new Map();
 var results = new Array();
+var num = 0;
 
 http.listen(PORT, () => {
   console.log('listening on *:8080');
 })
 
 io.on('connection', (socket) => {
+  num++;
   socket.join('defaultRoom');
   console.log('connection!');
-  users.set(socket.id, {id: socket.id, name: socket.id});
+  users.set(socket.id, {id: socket.id, name: 'user' + num});
   console.log(users);
   io.in('defaultRoom').emit('usersUpdate', {users: Array.from(users)});
 
