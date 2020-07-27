@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import './App.css';
+import 'fontsource-roboto';
 import Room from './components/Room';
 
 const io = require('socket.io-client')
@@ -10,7 +11,7 @@ class App extends Component {
     super(props);
     this.state = {
       room: {
-        name: 'Default Room',
+        name: 'HK 1984',
         currentUser: {},
         users: new Map(),
         results: new Array()

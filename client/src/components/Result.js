@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import ListItem from '@material-ui/core/ListItem';
+
 import Dice from './Dice';
 
 class Result extends Component {
@@ -8,8 +10,9 @@ class Result extends Component {
         })
         return (
         <div>
-            <h4>{this.props.name} rolled {this.props.total}</h4>
-            {diceComponents}
+            <ListItem button divider>
+                <p>{this.props.name} rolled {this.props.total}  {diceComponents}</p>
+            </ListItem>
         </div>
         )
     }

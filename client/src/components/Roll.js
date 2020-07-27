@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Button from '@material-ui/core/Button';
 
 class Roll extends Component {
     constructor(props) {
@@ -13,10 +14,9 @@ class Roll extends Component {
     render() {
         return (
         <div>
-            <h2>Rolls:</h2>
             <div>
                 <form onSubmit={this.props.onRoll}>
-                    <input type="submit" value="Roll" />
+                    <Button variant="contained" type="submit">Roll!</Button>
                 </form>
             </div>
         </div>

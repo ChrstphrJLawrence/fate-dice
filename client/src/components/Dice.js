@@ -11,12 +11,12 @@ class Dice extends Component {
 }
 
 function Icon(props) {
-    if (props.value == -1) {
-        return <FontAwesomeIcon icon={faMinusSquare} />
-    } else if (props.value == 0) {
-        return <FontAwesomeIcon icon={faSquare} />
-    } else if (props.value == 1) {
-    return <FontAwesomeIcon icon={faPlusSquare} />
+    if (props.value === -1) {
+        return <FontAwesomeIcon icon={faMinusSquare} size='lg' />
+    } else if (props.value === 0) {
+        return <FontAwesomeIcon icon={faSquare} size='lg' />
+    } else if (props.value === 1) {
+    return <FontAwesomeIcon icon={faPlusSquare} size='lg'/>
 }
 }
 
