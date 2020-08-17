@@ -26,6 +26,7 @@ io.on('connection', (socket) => {
   users.set(socket.id, {id: socket.id, name: 'user' + num});
   console.log(users);
   io.in('defaultRoom').emit('usersUpdate', {users: Array.from(users)});
+  io.in('defaultRoom').emit('roll', results);
 
   socket.on('disconnect', function() {
     console.log('disconnected!');
