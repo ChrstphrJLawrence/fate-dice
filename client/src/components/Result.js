@@ -6,7 +6,7 @@ import Dice from './Dice';
 class Result extends Component {
     render() {
         const diceComponents = this.props.dice.map((value) => {
-            return <Dice value={value} />
+            return <span> <Dice value={value} /></span>
         })
         return (
         <div>
