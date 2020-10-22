@@ -11,7 +11,7 @@ class App extends Component {
     super(props);
     this.state = {
       room: {
-        name: 'HK 1984',
+        name: 'WIZARDS!',
         currentUser: {},
         users: new Map(),
         results: new Array()
@@ -42,15 +42,30 @@ class App extends Component {
     const socket = io.connect();
     this.setState({ socket : socket });
 
+    socket.on('connect', () => {
+      if (this.state.room.currentUser.hasOwnProperty('name')) {
+        this.state.socket.emit('nameChange', this.state.room.currentUser.name);
+      }
+      this.setState(prevState => {
+        prevState.room.currentUser.id = socket.id;
+        return prevState;
+      })
+    })
+
     socket.on('usersUpdate', (data) => {
       var users = new Map(data.users)
       var thisUser = users.get(socket.id);
       var otherUsers = users;
       otherUsers.delete(socket.id);
+      if (!this.state.room.currentUser.hasOwnProperty('name')) {
+        this.setState(prevState => {
+          prevState.room.currentUser = thisUser;
+          return prevState;
+        })
+      }
       this.setState({ room: { 
         ...this.state.room, 
-        "users" : otherUsers,
-        "currentUser": thisUser } })
+        "users" : otherUsers} })
     });
 
     socket.on('roll', (results) => {
